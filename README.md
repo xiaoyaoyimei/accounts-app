@@ -1,3 +1,6 @@
+
+视频教程由 https://www.rails365.net/playlists/react-ji-chu-shi-jian-pian-xiao-xing-cai-wu-xi-tong
+提供。非常感谢。财务管理系统学习react.
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
