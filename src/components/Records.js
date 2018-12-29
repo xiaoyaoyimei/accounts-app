@@ -7,6 +7,7 @@ import AmountBox from './AmountBox'
 class Records extends Component {
 	
 	constructor() {
+		console.log('fff ')
 	    super();
 			this.state={
 				isLoader:false,
@@ -16,22 +17,7 @@ class Records extends Component {
 				]
 			}
 			}
-			componentDidMount(){
-				RecordsAPI.getAll().then(
-				response=>this.setState({records:response.data,isLoader:true}),
-				
-				).catch(error=>this.setState({isLoader:true,error}))
-			}
-    addRecord(record){
-			this.setState({
-				error:null,
-				isLoader:true,
-				records:[
-					...this.state.records,
-					record
-				]
-			})
-		}
+		
 		 updateRecord(record, data) {
     const recordIndex = this.state.records.indexOf(record);
     const newRecords = this.state.records.map( (item, index) => {
@@ -58,25 +44,74 @@ class Records extends Component {
 		});
 	}
 	credits(){
-		let credits=this.state.records.filter((record)=>{
-			return record.amount>=0
-		})
-		return credits.reduce((prev,curr)=>{
-			return prev+Number.parseInt(curr.amount,0)
-		},0)
+// 		let credits=this.state.records.filter((record)=>{
+// 			return record.amount>=0
+// 		})
+// 
+// 		return credits.reduce((prev,curr)=>{
+// 			return prev+Number.parseInt(curr.amount,0)
+// 		},0)
 	}
-	debits(){
+
+	balance(){
+		//return this.credits()+this.debits()
+	}
+	 componentWillMount() {
+    console.log("Component will mount");
+  }
+
+  componentDidMount() {
+     console.log("Component did mount");
+		RecordsAPI.getAll().then(
+				response=>this.setState({records:response.data,isLoader:true}),
+				
+				).catch(error=>this.setState({isLoader:true,error}))
+			}
+    addRecord(record){
+			this.setState({
+				error:null,
+				isLoader:true,
+				records:[
+					...this.state.records,
+					record
+				]
+			})
+			this.debits()
+  }
+	 debits = () => {
+		console.log(this.state.records)
 		let credits=this.state.records.filter((record)=>{
 			return record.amount<0
 		})
-		return credits.reduce((prev,curr)=>{
-			return prev+Number.parseInt(curr.amount,0)
-		},0)
+			console.log(credits)	
+		return credits.reduce((prev,curr)=>{return prev+Number.parseInt(curr.amount,0)},0)
 	}
-	balance(){
-		return this.credits()+this.debits()
-	}
+  componentWillReceiveProps(nextProps) {
+    console.log('Component will receive props', nextProps);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('Component should update', nextProps, nextState);
+    if (nextState.status === 1) {
+      return false;
+    }
+    return true;
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    console.log('Component will update', nextProps, nextState);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('Component did update', prevProps, prevState);
+  }
+
+  componentWillUnmount() {
+    console.log('Component will unmount');
+  }
+
   render() {
+	  console.log('')
 		const{error,isLoader,records}=this.state;
 		let recordsComponent;
 		if(error){
@@ -106,10 +141,10 @@ class Records extends Component {
 			<div>
 						<h2>Records</h2>
 						<div className="row mb-3">
-						<AmountBox amount={this.credits()}  text="Credit" type="success"/>
-						<AmountBox amount={this.debits()}  text="Debt" type="danger"/>
-						<AmountBox amount={this.balance()}  text="Balance" type="info"/>
-										   </div>
+						
+							<AmountBox amount={this.debits()}  text="Debt" type="danger"/>
+			
+						</div>
 						<RecordForm handleNewRecord={this.addRecord.bind(this)} />
 
 				   {recordsComponent}
